@@ -37,25 +37,28 @@ class Viking(Soldier):
         else:
             return f"{self.name} has died in act of combat"
 
-'''# Saxon
+# Saxon
 
 class Saxon(Soldier):
-    def __init__(self, health, strength):
-        # your code here
 
     def receiveDamage(self, damage):
-        # your code here
+        self.health -= damage
+        if self.health > 0:
+            return f"A Saxon has received {damage} points of damage"
+        else:
+            return "A Saxon has died in combat"
 
 # Davicente
 
 class War():
     def __init__(self):
-        # your code here
+        self.vikingArmy = []
+        self.saxonArmy = []
 
     def addViking(self, viking):
-        # your code here
+        self.vikinArmy.append(viking)
     
-    def addSaxon(self, saxon):
+    '''def addSaxon(self, saxon):
         # your code here
     
     def vikingAttack(self):
