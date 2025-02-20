@@ -4,8 +4,12 @@ import random
 from vikingsClasses import Soldier, Viking, Saxon, War
 import names
 from playsound import playsound
-from threading import Thread
+from threading import Thread, Event, Lock
 import os
+import sys
+
+stop_event = Event()
+output_lock = Lock()
 
 #Intro
 def star_wars_intro():
@@ -35,8 +39,8 @@ def get_user_input():
     while True:
         try:
             viking_warriors = int(input("Enter the number of Viking warriors: "))
-            if viking_warriors <= 0:
-                print("Viking armie must have at least one warrior. Try again.")
+            if viking_warriors < 1:
+                print("Viking armie must have more than one warrior. Try again.")
                 continue
             break
         except ValueError:
@@ -46,8 +50,8 @@ def get_user_input():
     while True:
         try:
             saxon_warriors = int(input("Enter the number of Saxon warriors: "))
-            if saxon_warriors <= 0:
-                print("Saxon armie must have at least one warrior. Try again.")
+            if saxon_warriors < 1:
+                print("Saxon armie must have more than one warrior. Try again.")
                 continue
             break
         except ValueError:
@@ -67,23 +71,36 @@ def get_user_bet():
 def generate_realistic_names(count):
     return [names.get_full_name() for name in range(count)]
 
+def battle_animation():
+    signs = ["|", "/", "-", "\\"]
+    while not stop_event.is_set():  
+        for sign in signs:
+            sys.stdout.write(f"\rBattle in progress... {sign}") 
+            sys.stdout.flush()
+            time.sleep(0.2) 
+    time.sleep(0.5) 
+    with output_lock:  # Clear the Battle in progress line after stopping
+        sys.stdout.write("\rWar has ended" + " " * 50 + "\n")
+        sys.stdout.flush()
+    
+
 def main():
 
     #Intro
     
-    star_wars_intro()
+    #star_wars_intro()
 
     ########################### Enter an image to start the war ######################################
 
     #User imput
     army_count = get_user_input()
     user_bet = get_user_bet()
-
-    ########################### Enter a sound to start the battle ######################################
     
     time.sleep(1)
     print("\nLet the battle decide the fate of the realm\n")
-    time.sleep(1.5)
+    # An animation while calculatios are done
+    animation_thread = Thread(target=battle_animation)
+    animation_thread.start()
 
     #Let's begin the army construction
     great_war = War()
@@ -91,17 +108,16 @@ def main():
     #Create Vikings
     list_names = generate_realistic_names(army_count[0])
     for i in range(0,army_count[0]):
-        if i:
-            great_war.addViking(Viking(random.choice(list_names),100,random.randint(0,100)))
+        great_war.addViking(Viking(random.choice(list_names),100,random.randint(0,100)))
 
     #Create Saxons
     for i in range(0,army_count[1]):
-        if i:
-            great_war.addSaxon(Saxon(100,random.randint(0,100)))
+        great_war.addSaxon(Saxon(100,random.randint(0,100)))
     
     #Let's begin the war
     round = 0
     war_result = ""
+
     while great_war.showStatus() == "Vikings and Saxons are still in the thick of battle.":
         great_war.vikingAttack()
         great_war.saxonAttack()
@@ -110,9 +126,10 @@ def main():
         war_result = great_war.showStatus()
         round += 1
 
-    ########################### Enter a sound to finish the battle ######################################
-
-    print("War has ended\n")
+    # Stop the animation
+    stop_event.set()
+    time.sleep(2)
+    #print("War has ended\n")
     #Lets show the war results 
     print (war_result)
 
@@ -121,25 +138,21 @@ def main():
         print(f"Congratulations! You guessed right, {user_bet} won!\n")
         ########################### Enter a happy face ######################################
 
-        ########################### Enter a happy sound ######################################
     else:
-        print(f"\nBetter luck next time!\n") 
+        print(f"Better luck next time!\n") 
         ########################### Enter a sad face ######################################   
-
-        ########################### Enter a sad sound ######################################
 
     print(f"Let's play again!")
     os._exit(1)
 
 def playmusic():
-    songfilename = 'sound.m4a' #soundlong.mp3
+    songfilename = 'soundlong.mp3' #soundlong.mp3
     playsound(songfilename, 1)
 
 # Run the game
 if __name__ == "__main__":
 
     textThread = Thread(target=main)
-    textThread.start()
-
     soundThread = Thread(target=playmusic)
     soundThread.start()
+    textThread.start()

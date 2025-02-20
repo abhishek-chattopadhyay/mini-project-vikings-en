@@ -3,7 +3,7 @@ import sys
 import random
 from vikingsClasses import Soldier, Viking, Saxon, War
 import names
-from playsound import playsound
+
 #Intro
 def star_wars_intro():
     intro_text = """
@@ -80,7 +80,6 @@ def main():
     
     time.sleep(1)
     print("\nLet the battle decide the fate of the realm\n")
-    playsound('sound.m4a')
     time.sleep(1.5)
 
     #Let's begin the army construction
