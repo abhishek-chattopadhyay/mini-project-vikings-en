@@ -4,6 +4,9 @@ import random
 from vikingsClasses import Soldier, Viking, Saxon, War
 import names
 from playsound import playsound
+from threading import Thread
+import os
+
 #Intro
 def star_wars_intro():
     intro_text = """
@@ -80,7 +83,6 @@ def main():
     
     time.sleep(1)
     print("\nLet the battle decide the fate of the realm\n")
-    playsound('sound.m4a')
     time.sleep(1.5)
 
     #Let's begin the army construction
@@ -127,8 +129,17 @@ def main():
         ########################### Enter a sad sound ######################################
 
     print(f"Let's play again!")
+    os._exit(1)
+
+def playmusic():
+    songfilename = 'sound.m4a' #soundlong.mp3
+    playsound(songfilename, 1)
 
 # Run the game
 if __name__ == "__main__":
-    #playsound('/Users/debbie/Downloads/Ironhack2.m4a')
-    main()
+
+    textThread = Thread(target=main)
+    textThread.start()
+
+    soundThread = Thread(target=playmusic)
+    soundThread.start()
