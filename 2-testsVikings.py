@@ -1,3 +1,4 @@
+#!/usr/bin/python
 import unittest
 from vikingsClasses import Viking
 from inspect import signature

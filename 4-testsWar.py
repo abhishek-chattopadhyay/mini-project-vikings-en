@@ -1,3 +1,5 @@
+#!/usr/bin/python
+
 import unittest
 from vikingsClasses import War, Viking, Saxon
 from inspect import signature
