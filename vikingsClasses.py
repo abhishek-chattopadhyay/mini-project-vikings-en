@@ -62,26 +62,35 @@ class War():
         self.saxonArmy.append(saxon)
  
     def vikingAttack(self):
-        random_viking = random.choice(self.vikingArmy)
-        random_saxon = random.choice(self.saxonArmy)
-        saxon_status = random_saxon.receiveDamage(random_viking.strength)
 
-        # remove dead saxon from the army
-        if random_saxon.health <= 0:
-            self.saxonArmy.remove(random_saxon)
-        
-        return saxon_status
-    
+        if len(self.vikingArmy) > 0 and len(self.saxonArmy) > 0:
+
+            random_viking = random.choice(self.vikingArmy)
+            random_saxon = random.choice(self.saxonArmy)
+            saxon_status = random_saxon.receiveDamage(random_viking.strength)
+
+            # remove dead saxon from the army
+            if random_saxon.health <= 0:
+                self.saxonArmy.remove(random_saxon)
+            return saxon_status
+        else:
+            self.showStatus()
+            
     def saxonAttack(self):
-        random_viking = random.choice(self.vikingArmy)
-        random_saxon = random.choice(self.saxonArmy)
-        viking_status = random_viking.receiveDamage(random_saxon.strength)
 
-        # remove dead saxon from the army
-        if random_viking.health <= 0:
-            self.vikingArmy.remove(random_viking)
+        if len(self.vikingArmy) > 0 and len(self.saxonArmy) > 0:
 
-        return viking_status
+            random_viking = random.choice(self.vikingArmy)
+            random_saxon = random.choice(self.saxonArmy)
+            viking_status = random_viking.receiveDamage(random_saxon.strength)
+
+            # remove dead saxon from the army
+            if random_viking.health <= 0:
+                self.vikingArmy.remove(random_viking)
+
+            return viking_status      
+        else:
+            self.showStatus()
 
     def showStatus(self):
         # your code here
