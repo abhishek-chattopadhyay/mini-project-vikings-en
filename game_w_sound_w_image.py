@@ -84,61 +84,47 @@ def battle_animation():
         sys.stdout.write("\rWar has ended" + " " * 50 + "\n")
         sys.stdout.flush()
 
-def show_image():
-    pygame.init()
-    
-    # dimension 
-    X = 540
-    Y = 360
+def show_image(stage=None, bet=None):
+    try:
+        images = ["./war_1.jpg", "./Leonardo-Dicaprio-Cheers.jpg", "./better_luck.jpg"] # iamges here
+        dim = [(540, 360), (600, 400), (750, 1000)] # dimension of the images
+        
+        # begin
+        X = dim[0][0]
+        Y = dim[0][1]
+        message = "Let the battle begin..."
+        image = images[0]
 
-    scrn = pygame.display.set_mode((X, Y)) # create the display surface object of specific dimension
-    pygame.display.set_caption("Let the battle start") # set the pygame window name
-    
-    imp = pygame.image.load("./war_1.jpg").convert() # create a surface object, image is drawn on it
-    scrn.blit(imp, (0, 0)) # using blit to copy content from one surface to another
-    pygame.display.flip()
-    time.sleep(8)
-    pygame.quit()
+        if stage == "winner" and bet != None: # winner
+            image = images[1]
+            X = dim[1][0]
+            Y = dim[1][1]
+            message = f"Congratulations! You guessed right, {bet} won!"
 
-def show_happy_image(winner):
-    pygame.init()
-    
-    # dimension 
-    X = 600
-    Y = 400
+        elif stage == "looser": # looser
+            image = images[2]
+            X = dim[2][0]
+            Y = dim[2][1]
+            message = "Better luck next time!"
 
-    scrn = pygame.display.set_mode((X, Y)) # create the display surface object of specific dimension
-    pygame.display.set_caption(f"Congratulations! You guessed right, {winner} won!") # set the pygame window name
-    
-    imp = pygame.image.load("./Leonardo-Dicaprio-Cheers.jpg").convert() # create a surface object, image is drawn on it
-    scrn.blit(imp, (0, 0)) # using blit to copy content from one surface to another
-    pygame.display.flip()
-    time.sleep(8)
-    pygame.quit()
+        pygame.init()
+        scrn = pygame.display.set_mode((X, Y)) # create the display surface object of specific dimension
+        pygame.display.set_caption(message) # set the pygame window name
+        
+        imp = pygame.image.load(image).convert() # create a surface object, image is drawn on it
+        scrn.blit(imp, (0, 0)) # using blit to copy content from one surface to another
+        pygame.display.flip()
+        time.sleep(4)
+        pygame.display.quit()
+    except:
+        stop_event.set()
 
-def show_sad_image():
-    pygame.init()
-    
-    # dimension 
-    X = 750
-    Y = 1000
-
-    scrn = pygame.display.set_mode((X, Y)) # create the display surface object of specific dimension
-    pygame.display.set_caption(f"Better luck next time!") # set the pygame window name
-    
-    imp = pygame.image.load("./better_luck.jpg").convert() # create a surface object, image is drawn on it
-    scrn.blit(imp, (0, 0)) # using blit to copy content from one surface to another
-    pygame.display.flip()
-    time.sleep(8)
-    pygame.quit()
 
 def main():
 
     #Intro
-    
-    #star_wars_intro()
-
-    show_image() # show an war image at the start of the game
+    star_wars_intro()
+    show_image() 
 
     #User imput
     army_count = get_user_input()
@@ -146,6 +132,7 @@ def main():
     
     time.sleep(1)
     print("\nLet the battle decide the fate of the realm\n")
+
     # An animation while calculatios are done
     animation_thread = Thread(target=battle_animation)
     animation_thread.start()
@@ -174,31 +161,50 @@ def main():
         war_result = great_war.showStatus()
         round += 1
 
-    # Stop the animation
+    # Stop the animation and msuic
     stop_event.set()
     time.sleep(2)
-    #print("War has ended\n")
+
+    pygame.mixer.music.stop()  # Ensure music stops before exit
+    pygame.mixer.quit()  # Clean up pygame audio system
+
     #Lets show the war results 
     print (war_result)
 
-    #Lets se the bet results
+    #Lets see the bet results
     if user_bet.lower() in war_result.lower():
-        show_happy_image(user_bet)
-
+        print (f"Congratulations! You guessed right, {user_bet.capitalize()} won!\n")
+        show_image(stage ="winner", bet=user_bet)
     else:
-        show_sad_image()
+        show_image(stage = "looser")
+        print ("Better luck next time!\n")
 
     print(f"Let's play again!")
     os._exit(1)
 
 def playmusic():
-    songfilename = 'soundlong.mp3' #soundlong.mp3
-    playsound(songfilename, 1)
+    pygame.mixer.init()
+    pygame.mixer.music.load("soundlong.mp3")  
+    pygame.mixer.music.play(-1) 
+
+    while not stop_event.is_set():
+        time.sleep(1)  
+
+    pygame.mixer.music.stop()  
+    time.sleep(3)  
+    pygame.mixer.quit()
 
 # Run the game
 if __name__ == "__main__":
-
     textThread = Thread(target=main)
     soundThread = Thread(target=playmusic)
     soundThread.start()
     textThread.start()
+
+    try:
+        textThread.join()  # Wait for the main game to finish
+    except:
+        print("\nExiting gracefully...")
+        stop_event.set()  # Signal threads to stop
+        soundThread.join()  # Ensure music thread stops
+        os._exit(0)  # Exit the program cleanly
