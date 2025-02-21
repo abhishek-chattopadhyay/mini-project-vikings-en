@@ -86,6 +86,8 @@ def battle_animation():
 
 def show_image():
     pygame.init()
+    
+    # dimension 
     X = 540
     Y = 360
 
@@ -95,7 +97,39 @@ def show_image():
     imp = pygame.image.load("./war_1.jpg").convert() # create a surface object, image is drawn on it
     scrn.blit(imp, (0, 0)) # using blit to copy content from one surface to another
     pygame.display.flip()
-    time.sleep(4)
+    time.sleep(8)
+    pygame.quit()
+
+def show_happy_image(winner):
+    pygame.init()
+    
+    # dimension 
+    X = 600
+    Y = 400
+
+    scrn = pygame.display.set_mode((X, Y)) # create the display surface object of specific dimension
+    pygame.display.set_caption(f"Congratulations! You guessed right, {winner} won!") # set the pygame window name
+    
+    imp = pygame.image.load("./Leonardo-Dicaprio-Cheers.jpg").convert() # create a surface object, image is drawn on it
+    scrn.blit(imp, (0, 0)) # using blit to copy content from one surface to another
+    pygame.display.flip()
+    time.sleep(8)
+    pygame.quit()
+
+def show_sad_image(winner):
+    pygame.init()
+    
+    # dimension 
+    X = 750
+    Y = 1000
+
+    scrn = pygame.display.set_mode((X, Y)) # create the display surface object of specific dimension
+    pygame.display.set_caption(f"Better luck next time!") # set the pygame window name
+    
+    imp = pygame.image.load("./better_luck.jpg").convert() # create a surface object, image is drawn on it
+    scrn.blit(imp, (0, 0)) # using blit to copy content from one surface to another
+    pygame.display.flip()
+    time.sleep(8)
     pygame.quit()
 
 def main():
@@ -104,7 +138,7 @@ def main():
     
     #star_wars_intro()
 
-    show_image() 
+    show_image() # show an war image at the start of the game
 
     #User imput
     army_count = get_user_input()
@@ -149,12 +183,14 @@ def main():
 
     #Lets se the bet results
     if user_bet.lower() in war_result.lower():
-        print(f"Congratulations! You guessed right, {user_bet} won!\n")
+        #print(f"Congratulations! You guessed right, {user_bet} won!\n")
         ########################### Enter a happy face ######################################
+        show_happy_image(user_bet)
 
     else:
-        print(f"Better luck next time!\n") 
-        ########################### Enter a sad face ######################################   
+        #print(f"Better luck next time!\n") 
+        ########################### Enter a sad face ###################################### 
+        show_sad_image()
 
     print(f"Let's play again!")
     os._exit(1)
