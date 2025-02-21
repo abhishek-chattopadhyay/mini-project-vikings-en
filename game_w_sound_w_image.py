@@ -116,7 +116,7 @@ def show_happy_image(winner):
     time.sleep(8)
     pygame.quit()
 
-def show_sad_image(winner):
+def show_sad_image():
     pygame.init()
     
     # dimension 
@@ -183,13 +183,9 @@ def main():
 
     #Lets se the bet results
     if user_bet.lower() in war_result.lower():
-        #print(f"Congratulations! You guessed right, {user_bet} won!\n")
-        ########################### Enter a happy face ######################################
         show_happy_image(user_bet)
 
     else:
-        #print(f"Better luck next time!\n") 
-        ########################### Enter a sad face ###################################### 
         show_sad_image()
 
     print(f"Let's play again!")
